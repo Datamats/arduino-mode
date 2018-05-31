@@ -13,7 +13,7 @@
   ;; https://github.com/arduino/Arduino/blob/master/build/shared/manpage.adoc
   "Arduino checker using Arduino IDE. (This requires higher than version 1.5+)"
   ;; source, source-inplace, source-original
-  :command ("arduino" "--verify" source-original)
+  :command ("arduino" "--verify" source)
   :error-patterns
   (;; I don't make sure about this warning... How to emit a warning?
    (warning line-start (file-name) ":" line ":" column ": warning: " (message) line-end)
