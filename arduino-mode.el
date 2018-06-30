@@ -212,7 +212,7 @@ Value is a symbol.  The possible values are the symbols in the
   (let* ((proc-name "arduino-upload")
          (proc-buffer "*arduino-upload*")
          (proc (make-process
-                :command (list arduino-executable "--upload" (buffer-file-name))
+                :command (list arduino-executable "--port" (arduino-serial-get-serial 'false) "--upload" (buffer-file-name))
                 :name proc-name
                 :buffer proc-buffer
                 :sentinel (lambda (proc event)
@@ -226,6 +226,7 @@ Value is a symbol.  The possible values are the symbols in the
                             (setq-local mode-line-process nil)
                             (with-current-buffer arduino-upload-process-buf
                               (when spinner-current (spinner-stop)))))))
+          (message "Uploading...")
     (spinner-start arduino-spinner-type)
     (setq mode-line-process proc-name)))
 
@@ -303,12 +304,13 @@ Value is a symbol.  The possible values are the symbols in the
    arduino-executable "--install-library" library))
 
 (require 'term)
-(defun arduino-serial-monitor (port speed)
+(defun arduino-serial-monitor ()
   "Monitor the `SPEED' on serial connection on `PORT' to the Arduino."
-  (interactive (list (serial-read-name) nil))
+  (interactive)
+  (let ((port (arduino-serial-get-serial 'false)))
   (if (get-buffer-process port)
 	    (switch-to-buffer port)
-    (serial-term port (or speed (serial-read-speed)))))
+    (serial-term port (string-to-number (read-string "Enter the speed: "))))))
 
 ;;;###autoload
 (defun arduino-sketch-new (sketch)
